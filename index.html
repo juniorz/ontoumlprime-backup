@@ -55,7 +55,96 @@ Available as an Eclipse plugin, the editor integrates with several modelling too
 <h2>
 <a name="the-language" class="anchor" href="#the-language"><span class="octicon octicon-link"></span></a>The language</h2>
 
-<p><em>Coming soon</em></p>
+<pre><code>
+Category SpatialThing { }
+Category GeographicalSpace { }
+
+//GeneralizationSet SpatialThing_GeographicalSpace specializes SpatialThing into GeographicalSpace;
+GeographicalSpace =&gt; SpatialThing;
+
+Category MaterialEntity { }
+
+Category InanimatedEntity { }
+Category BiologicalEntity { }
+GeneralizationSet InanimatedOrBiological specializes MaterialEntity into InanimatedEntity, BiologicalEntity;
+
+Category HumanOrgan {}
+HumanOrgan =&gt; BiologicalEntity;
+
+Category Agent { }
+Mixin ActiveAgent { }
+Mixin PerformerArtist { }
+
+Kind Person { }
+Person =&gt; Agent;
+
+Kind SurgeryRoom { }
+Kind Gallery { }
+Kind Museum { }
+
+SurgeryRoom, Gallery, Museum specialize GeographicalSpace; 
+
+
+Kind Statue {}
+Statue =&gt; InanimatedEntity;
+
+Kind HumanHeart {}
+HumanHeart =&gt; HumanOrgan;
+
+Kind Organization { }
+Organization =&gt; Agent;
+
+Kind Track { }
+Kind Album {}
+
+extensional CollectiveUniversal Group { }
+
+Quantity PhysicalObject { }
+
+SubKind MalePerson { }
+SubKind FemalePerson { }
+complete GeneralizationSet Gender specializes Person into MalePerson, FemalePerson;
+
+SubKind Band {}
+Band =&gt; Organization;
+Band =&gt; PerformerArtist;
+
+Phase DeceasedPerson { }
+Phase LivingPerson { }
+LivingPerson =&gt; ActiveAgent;
+
+complete GeneralizationSet PersonLifeStatus specializes Person into LivingPerson, DeceasedPerson;
+
+Phase ExtinctOrganization {}
+Phase ActiveOrganization {}
+ActiveOrganization =&gt; ActiveAgent;
+complete GeneralizationSet OrganizationLifeStatus specializes Organization into ActiveOrganization, ExtinctOrganization;
+
+//mediation is required
+//RoleMixin Parent { }
+
+Role Parent { }
+Parent =&gt; Person; // Is it needed? Isn't it derived from the completeness of the GeneralizationSet
+
+// They have no mediation but it is required. Why?
+Role Father { }
+Father =&gt; MalePerson;
+
+// They have no mediation but it is required. Why?
+Role Mother { }
+Mother =&gt; FemalePerson;
+
+complete GeneralizationSet FatherOrMother specializes Parent into Father, Mother;
+
+Role Offspring { }
+Offspring =&gt; Person;
+
+// Big win! Haven't needed to extend the DSL to make this construct
+RelatorUniversal Registration {
+    mediates Offspring[1..1];
+    mediates Parent[1..2];
+}
+</code></pre>
 
 <h3>
 <a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
